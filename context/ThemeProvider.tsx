@@ -7,7 +7,7 @@ type ThemeProps = {
 const ThemeContext = createContext<ThemeProps | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [mode, setMode] = useState("");
+  const [mode, setMode] = useState("light");
 
   // const handleThemeChange = () => {
   //   if (mode === "dark") {
@@ -19,10 +19,20 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   //     document.documentElement.classList.add("dark");
   //   }
   // };
+  const handleThemeChange = () => {
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
 
   useEffect(() => {
-    document.documentElement.classList.toggle("light", mode === "light");
-    document.documentElement.classList.toggle("dark", mode === "dark");
+    handleThemeChange();
   }, [mode]);
   return (
     <ThemeContext.Provider value={{ mode, setMode }}>
