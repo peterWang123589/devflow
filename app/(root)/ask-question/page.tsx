@@ -4,8 +4,7 @@ import { auth } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import { getUserById } from '@/lib/actions/user.action';
 const QuestionPage =async () => {
-  // const {userId}=auth()
-  const userId="123456"
+  const {userId}=auth()
   if(!userId){
     return redirect("/sign-in")
   }
