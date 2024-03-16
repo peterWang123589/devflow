@@ -1,13 +1,28 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useLayoutEffect } from "react";
 type ThemeProps = {
   mode: string;
   setMode: (mode: string) => void;
 };
 const ThemeContext = createContext<ThemeProps | undefined>(undefined);
+const preferDark = () => {
+  return window && window.matchMedia("(prefers-color-scheme: dark)").matches;
+};
+const getMode = () => {
+  return window && window.localStorage.getItem("theme");
+};
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [mode, setMode] = useState("light");
+
+    useLayoutEffect(() => {
+    const theme = getMode();
+    if (theme) {
+      setMode(theme);
+    }else{
+      setMode("system");
+    }
+  },[])
 
   // const handleThemeChange = () => {
   //   if (mode === "dark") {
@@ -23,7 +38,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     if (
       localStorage.theme === "dark" ||
       (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
+       preferDark())
     ) {
       document.documentElement.classList.add("dark");
     } else {

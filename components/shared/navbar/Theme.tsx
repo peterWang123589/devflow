@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { useTheme } from "@/context/ThemeProvider";
 
@@ -20,16 +20,23 @@ const getMode = () => {
   return window && window.localStorage.getItem("theme");
 };
 const ThemeIcon = ({ mode }: { mode: string }) => {
-  const theme = getMode();
-  let logo = null;
-  if (theme) {
-    logo = mode === "light" ? "sun.svg" : "moon.svg";
-  } else {
-    logo = preferDark() ? "moon.svg" : "sun.svg";
-  }
+  const [logo,setLogo] = useState("")
 
+
+
+useEffect(()=>{
+
+  const theme = getMode();
+  if (theme) {
+    
+    setLogo(theme === "light" ? "sun.svg" : "moon.svg")
+  } else {
+    setLogo(preferDark() ? "moon.svg" : "sun.svg")
+  
+  }
+},[mode])
   return (
-    <Image
+  <Image
       src={`/assets/icons/${logo}`}
       alt="sun"
       width={20}
@@ -40,6 +47,8 @@ const ThemeIcon = ({ mode }: { mode: string }) => {
 };
 const Theme = () => {
   const { mode, setMode } = useTheme();
+
+
 
   return (
     <Menubar className="relative border-none bg-transparent shadow-none">

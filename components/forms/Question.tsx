@@ -14,17 +14,26 @@ FormMessage} from '../ui/form'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { useForm} from "react-hook-form"
-import { QuestioSchema } from '@/lib/validation'
+import { QuestionSchema } from '@/lib/validation'
 import Image from 'next/image'
 import { Badge } from '../ui/badge'
+import {useRouter,usePathname} from 'next/navigation'
+import { createQuestion } from '@/lib/actions/question.action'
 const type:string="create"
-
- const Question=()=>{
+interface IQuestionProps{
+  userId:string;
+}
+ const Question=(props:IQuestionProps)=>{
+  const {userId}=props
+  
   const editorRef=useRef(null)
   const [isSubmitting,setIsSubmitting]=useState(false)
-  const form=useForm<z.infer<typeof QuestioSchema>>(
+  const router=useRouter()
+  const pathname=usePathname()
+  console.log(router,pathname)
+  const form=useForm<z.infer<typeof QuestionSchema>>(
     {
-      resolver:zodResolver(QuestioSchema),
+      resolver:zodResolver(QuestionSchema),
       defaultValues:{
         title:"",
         explanation:"",
@@ -32,13 +41,21 @@ const type:string="create"
       }
     }
   )
-function onSubmit(values:z.infer<typeof QuestioSchema>){
+async function onSubmit(values:z.infer<typeof QuestionSchema>){
   setIsSubmitting(true)
   try {
     console.log(values)
           // make an async call to your API -> create a question
       // contain all form data
       // navigate to home page
+      await createQuestion({
+        title:values.title,
+        content:values.explanation,
+        tags:values.tags,
+        author:JSON.parse(userId),
+        path:pathname
+      })
+      router.push("/")
   } catch (error) {
     
   }finally{

@@ -1,12 +1,22 @@
 import React from "react";
 import Question from '@/components/forms/Question';
-const QuestionPage = () => {
+import { auth } from '@clerk/nextjs';
+import { redirect } from 'next/navigation';
+import { getUserById } from '@/lib/actions/user.action';
+const QuestionPage =async () => {
+  // const {userId}=auth()
+  const userId="123456"
+  if(!userId){
+    return redirect("/sign-in")
+  }
+  const user=await getUserById({userId})
+  console.log(user)
   return (
     <div>
       <h1 className="h1-bold text-dark100_light900">Ask a question</h1>
 
       <div className="mt-9">
-        <Question />
+        <Question userId={JSON.stringify(user._id)} />
       </div>
     </div>
   );
