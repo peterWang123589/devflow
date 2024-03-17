@@ -32,6 +32,7 @@ const QuestionCard=({
   answers,
   createdAt
 }:QuestionProps)=>{
+
   return (
  <div className='card-wrapper 
  rounded-[10px] p-9 sm:px-11'>
@@ -57,7 +58,7 @@ const QuestionCard=({
   </div>
   <div className='flex-between mt-6 w-full flex-wrap
   gap-3'>
-    <Metric imgUrl='/assets/icons/avatar.svg'
+    <Metric imgUrl={author.picture}
     alt='user'
     value={author.name}
     title={ `- asked ${getTimestamp(createdAt)}`  }

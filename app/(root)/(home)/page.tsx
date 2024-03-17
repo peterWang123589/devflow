@@ -12,6 +12,7 @@ import { getQuestions } from '@/lib/actions/question.action';
 
 const Home = async () => {
   const {questions}=await getQuestions({})
+
   return (
     <>
     <div className=' flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center'>
@@ -30,6 +31,7 @@ const Home = async () => {
         {
 questions.length>0?(
   questions.map((question)=>{
+    console.log(question.author)
     return(
       <QuestionCard key={question._id} 
       _id={question._id}
