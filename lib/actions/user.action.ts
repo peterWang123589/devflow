@@ -2,7 +2,7 @@
 
 import User from '@/database/user.model'
 import { connectToDatabase } from '../mongoose'
-import { CreateUserParams, DeleteUserParams, UpdateUserParams } from './shared.type'
+import { CreateUserParams, DeleteUserParams, GetAllUsersParams, UpdateUserParams } from './shared.type'
 import { revalidatePath } from 'next/cache'
 import Question from '@/database/question.model'
 
@@ -81,3 +81,16 @@ export async function deleteUser(params:DeleteUserParams){
   }
 }
 
+export async function getAllUsers(params:GetAllUsersParams){
+
+  try {
+    await connectToDatabase()
+    const users=await User.find({}).sort({createdAt:'desc'})
+    return {
+      users
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
