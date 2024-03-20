@@ -18,44 +18,63 @@ import { QuestionSchema } from '@/lib/validation'
 import Image from 'next/image'
 import { Badge } from '../ui/badge'
 import {useRouter,usePathname} from 'next/navigation'
-import { createQuestion } from '@/lib/actions/question.action'
-const type:string="create"
+import { createQuestion, editQuestion } from '@/lib/actions/question.action'
+import { useTheme } from '@/context/ThemeProvider'
 interface IQuestionProps{
   userId:string;
+  type?:string;
+  questionDetails?:string;
 }
- const Question=(props:IQuestionProps)=>{
-  const {userId}=props
-  
+ const Question=({type=
+  "create",userId,questionDetails}:IQuestionProps)=>{
+
+  const {mode}=useTheme()
   const editorRef=useRef(null)
   const [isSubmitting,setIsSubmitting]=useState(false)
   const router=useRouter()
   const pathname=usePathname()
-  console.log(router,pathname)
+  const parsedQuestionDetails=  questionDetails && JSON.parse(questionDetails || "{}")
+  const groupedTags=parsedQuestionDetails?.tags.map((tag:any)=>{
+    return tag.name
+  })
   const form=useForm<z.infer<typeof QuestionSchema>>(
     {
       resolver:zodResolver(QuestionSchema),
       defaultValues:{
-        title:"",
-        explanation:"",
-        tags:[],
+        title:parsedQuestionDetails?.title||"",
+        explanation:parsedQuestionDetails?.content||"",
+        tags:groupedTags||[],
       }
     }
   )
 async function onSubmit(values:z.infer<typeof QuestionSchema>){
   setIsSubmitting(true)
   try {
-    console.log(values)
           // make an async call to your API -> create a question
       // contain all form data
       // navigate to home page
-      await createQuestion({
-        title:values.title,
-        content:values.explanation,
-        tags:values.tags,
-        author:JSON.parse(userId),
-        path:pathname
-      })
-      router.push("/")
+      if(type==="edit"){
+       await editQuestion(
+        {
+          questionId:parsedQuestionDetails._id,
+          title:values.title,
+          content:values.explanation,
+          path:pathname
+        }
+        ) 
+        router.push(`/question/${parsedQuestionDetails._id}`);
+      }else{
+        await createQuestion({
+          title:values.title,
+          content:values.explanation,
+          tags:values.tags,
+          author:JSON.parse(userId),
+          path:pathname
+        })
+        router.push("/")
+
+
+      }
   } catch (error) {
     
   }finally{
@@ -135,7 +154,7 @@ const handleInputKeyDown=(e:KeyboardEvent,
                   }
                   onEditorChange={(content)=>field.onChange(content)}
                   onBlur={field.onBlur}
-                  initialValue=""
+                  initialValue={field.value}
                   init={{
                     height: 350,
                     menubar: false,
@@ -161,6 +180,8 @@ const handleInputKeyDown=(e:KeyboardEvent,
                       "codesample | bold italic forecolor | alignleft aligncenter " +
                       "alignright alignjustify | bullist numlist ",
                     content_style: "body { font-family:Inter; font-size:16px }",
+                    skin: mode === "dark" ? "oxide-dark" : "oxide",
+                    content_css: mode === "dark" ? "dark" : "light",
                   }}
                 />
               </FormControl>
@@ -182,24 +203,29 @@ const handleInputKeyDown=(e:KeyboardEvent,
               </FormLabel>
               <FormControl className='mt-3.5'>
               <>
-                              <Input className='no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border' 
-                              placeholder="Add tags..." onKeyDown={(e)=>handleInputKeyDown(e,field)} />
+               <Input className='no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border' 
+                disabled={type==="edit"}              placeholder="Add tags..." onKeyDown={(e)=>handleInputKeyDown(e,field)} />
                                           {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 gap-2.5">
                       {field.value.map((tag: any) => (
                         <Badge
                           key={tag}
                           className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize"
-                          onClick={() => handleTagRemove(tag, field)}
+                          onClick={() =>type!=="edit" ? handleTagRemove(tag, field):()=>{}}
                         >
                           {tag}
-                          <Image
+                        {type!=="edit"&&
+                        (
+                             <Image
                             src="/assets/icons/close.svg"
                             alt="Close icon"
                             width={12}
                             height={12}
                             className="cursor-pointer object-contain invert-0 dark:invert"
                           />
+                        )
+                        
+                        }
                         </Badge>
                       ))}
                     </div>
