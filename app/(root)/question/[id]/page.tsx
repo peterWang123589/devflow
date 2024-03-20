@@ -12,6 +12,7 @@ import ParseHTML from '@/components/shared/ParseHTML'
 import RenderTag from '@/components/shared/RenderTag'
 import AllAnswers from '@/components/shared/AllAnswers'
 import Answer from '@/components/forms/Answer'
+import Votes from '@/components/shared/Votes'
 
 
 const Page=async ({params,searchParams}:any)=>{
@@ -38,7 +39,22 @@ const Page=async ({params,searchParams}:any)=>{
     {result.author.name}
    </p>
     </Link>
-    <div className='text-dark200_light900 flex justify-end'>Voting</div>
+    <div className='text-dark200_light900 flex justify-end'>
+     <Votes
+     type='question'
+     itemId={JSON.stringify(result._id)}
+     userId={JSON.stringify(user._id)}
+     upvotes={result.upvotes.length}
+     downvotes={result.downvotes.length}
+     hasupVoted={result.upvotes.includes(user._id)}
+     hasdownVoted={result.downvotes.includes(user._id)}
+     hasSaved={user.saved.includes(result._id)}
+     testflag="top"
+     
+     />
+
+
+    </div>
 
   </div>
    <h2 className='h2-semibold text-dark200_light900 mt-3.5 w-full text-left'>
@@ -81,7 +97,7 @@ textStyle='text-dark400_light800 small-medium'/>
   </div>
   <AllAnswers
   questionId={result._id}
-  userId={JSON.stringify(user._id)}
+  userId={user._id}
   totalAnswers={result.answers.length}
   />
   <Answer

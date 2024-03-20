@@ -6,6 +6,7 @@ import { getAnswers } from '@/lib/actions/answer.action';
 import Link from 'next/link';
 import { getTimestamp } from '@/lib/utils';
 import ParseHTML from './ParseHTML';
+import Votes from './Votes';
 
 
 
@@ -64,7 +65,16 @@ className='text-dark100_light900 light-border border-b py-10'>
        
        <div className='flex justify-end'>
 
-        VOTING
+       <Votes
+       type="answer"
+       itemId={JSON.stringify(answer._id)}
+       userId={JSON.stringify(userId)}
+       upvotes={answer.upvotes.length}
+       downvotes={answer.downvotes.length}
+       hasupVoted={answer.upvotes.includes(userId)}
+       hasdownVoted={answer.downvotes.includes(userId)}
+       testflag='bottom'
+       />
        </div>
     </div>
   </div>

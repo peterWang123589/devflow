@@ -30,7 +30,7 @@ return (
           result.tags.length>0?(
             result.tags.map((tag)=>{
               return (
-                <Link href={`/tag/${tag._id}`} 
+                <Link href={`tags/${tag._id}`} 
                  className='shadow-light100_darknone' key={tag._id}>
                 <article className='background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-8 py-10 sm:w-[260px]'>
                   <div className='background-light800_dark400 w-fit rounded-xl px-5 py-1.5'></div>
