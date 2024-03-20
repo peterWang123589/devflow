@@ -15,11 +15,13 @@ interface QuestionProps {
     _id: string;
     name: string;
     picture: string;
+    clerkId:string
   };
   upvotes: Array<object>;
   views: number;
   answers: Array<object>;
   createdAt: Date;
+  clerkId?:string|null
 }
 
 const QuestionCard=({
@@ -30,7 +32,8 @@ const QuestionCard=({
   upvotes,
   views,
   answers,
-  createdAt
+  createdAt,
+  clerkId
 }:QuestionProps)=>{
 
   return (
@@ -63,7 +66,7 @@ const QuestionCard=({
     value={author.name}
     title={ `- asked ${getTimestamp(createdAt)}`  }
     isAuthor
-    href={`/profile/${author._id}`}
+    href={`/profile/${author.clerkId}`}
     textStyle='small-medium text-dark400_light800'/>
       <Metric imgUrl='/assets/icons/like.svg'
     alt='Upvotes'
