@@ -2,27 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import RenderTag from "./RenderTag";
+import { getHotQuestions } from '@/lib/actions/question.action';
+import { getTopPopularTags } from '@/lib/actions/tag.action';
 
-const hotQuestion = [
-  { _id: 1, title: "How do I use epress as a custom server in NextJS?" },
-  { _id: 2, title: "Cascading Deletes in SQLAlchemy" },
-  { _id: 3, title: "How to perfectly center a div with Tailwind CSS?" },
-  {
-    _id: 4,
-    title:
-      "Best practices for fetching in a Next.js application with Server-Side Rendering(SSR)",
-  },
-  { _id: 5, title: "Redux Toolkit Not Updating State as expected" },
-];
-const popularTags = [
-  { _id: 1, name: "javascript", totalQuestion: 5 },
-  { _id: 2, name: "react", totalQuestion: 3 },
-  { _id: 3, name: "next", totalQuestion: 4 },
-  { _id: 4, name: "redux", totalQuestion: 2 },
-  { _id: 5, name: "java", totalQuestion: 5 },
-];
 
-const RightSidebar = () => {
+const RightSidebar = async () => {
+
+  const hotQuestion = await getHotQuestions();
+  const popularTags = await getTopPopularTags();
   return (
     <section
       className=" background-light900_dark200 light-border custom-scrollbar sticky right-0
@@ -61,7 +48,7 @@ const RightSidebar = () => {
               key={tag._id}
               _id={tag._id+''}
               name={tag.name}
-              totalQuestion={tag.totalQuestion}
+              totalQuestion={tag.numberOfQuestions}
               showCount
             />
           ))}

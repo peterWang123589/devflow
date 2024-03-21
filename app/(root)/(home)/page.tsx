@@ -8,10 +8,15 @@ import NoResult from '@/components/shared/NoResult';
 import QuestionCard from '@/components/cards/QuestionCard';
 import Link from 'next/link';
 import { getQuestions } from '@/lib/actions/question.action';
+import { SearchParamsProps } from '@/types';
 // questions=[]
 
-const Home = async () => {
-  const {questions}=await getQuestions({})
+const Home = async ({searchParams}:SearchParamsProps) => {
+  const {questions}=await getQuestions({
+    
+    searchQuery:searchParams?.q
+
+  })
 
   return (
     <>
