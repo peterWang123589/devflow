@@ -15,22 +15,24 @@ interface Props {
   userId:string
   totalAnswers:number;
   page?:number;
-  filter?:number;
+  filter?:string;
 }
 
 const AllAnswers =async ({questionId,userId,totalAnswers,page,filter}:Props) => {
   const result=await getAnswers({
-    questionId
+    questionId,
+    page:page?+page:1,
+    sortBy:filter
   })
   return (
     <div className='mt-11'> 
-     <div className='item-center jus-between flex'>
+     <div className='flex items-center justify-between'>
       <h3 className='primary-text-gradient'>
         {
           totalAnswers
         } Answers
-        <Filter filters={AnswerFilters} />
       </h3>
+        <Filter filters={AnswerFilters}  />
      </div>
      <div>
      {

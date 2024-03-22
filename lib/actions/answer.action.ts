@@ -40,7 +40,25 @@ export async function getAnswers(params:GetAnswersParams){
 
   try {
     await connectToDatabase()
-    const {questionId}=params
+    const {questionId,sortBy}=params
+    let sortOptions={}
+    switch (sortBy) {
+      case "highestUpvotes":
+        sortOptions={upvotes:'desc'}
+        break;
+       case 'lowestUpvotes':
+        sortOptions={upvotes:'asc'}
+        break;
+        case "recent":
+          sortOptions={createdAt:'desc'}
+          break;
+        case "old":
+          sortOptions={createdAt:'asc'}
+          break;
+      default:
+        break;
+    }
+
     const answers=await Answer.find({question:questionId}).populate({
       path:'author',
       model:User,
@@ -49,7 +67,7 @@ export async function getAnswers(params:GetAnswersParams){
 
       
 
-    }).sort({createdAt:'desc'})
+    }).sort(sortOptions)
     return {answers}
   } catch (error) {
     console.log(error)

@@ -89,7 +89,7 @@ export async function getAllUsers(params:GetAllUsersParams){
 
   try {
     await connectToDatabase()
-    const {searchQuery}=params
+    const {searchQuery,filter}=params
     const query:FilterQuery<typeof User>={}
     if (searchQuery) {
       query.$or=[
@@ -98,8 +98,23 @@ export async function getAllUsers(params:GetAllUsersParams){
       ]
       
     }
+    console.log(filter)
+    let sortOptions={}
+    switch (filter) {
+      case "new_users":
+        sortOptions={joinedAt:'desc'};
+        break;
+      case "old_users":
+        sortOptions={joinedAt:'asc'};
+        break;
+      case "top_contributors":
+        sortOptions={reputation:-1}
+        break;
+      default:
+        break;
+    }
 
-    const users=await User.find(query).sort({createdAt:'desc'})
+    const users=await User.find(query).sort(sortOptions)
     return {
       users
     }
@@ -150,6 +165,27 @@ export async function getSavedQuestions(params:GetSavedQuestionsParams) {
     const query:FilterQuery<typeof Question>=searchQuery?{
       title:{$regex:new RegExp(searchQuery,'i')}
     }:{}
+    let sortOptions={}
+    switch (filter) {
+      case "most_recent":
+        sortOptions={createdAt:'desc'}
+        
+        break;
+        case "oldest":
+          sortOptions={createdAt:'asc'}
+          break;
+        case "most_voted":
+            sortOptions={upvotes:'desc'}
+            break;
+        case "most_viewed":
+           sortOptions={views:'desc'}
+           break;
+        case "most_answered":
+          sortOptions={answers:'desc'}
+          break;
+      default:
+        break;
+    }
     // @ts-ignore
     const user=await User.findOne({clerkId}).populate({
       path:'saved',
@@ -157,7 +193,7 @@ export async function getSavedQuestions(params:GetSavedQuestionsParams) {
       options:{
         limit:pageSize,
         skip:pageSize*(page-1),
-        sort:{createdAt:'desc'},
+        sort:sortOptions,
         
       },
       populate:[

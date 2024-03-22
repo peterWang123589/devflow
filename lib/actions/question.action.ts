@@ -13,7 +13,7 @@ export async function getQuestions (params:GetQuestionsParams) {
   try {
     await connectToDatabase()
     console.log(params)
-    const searchQuery=params.searchQuery
+    const { searchQuery,filter }=params
     const query:FilterQuery<typeof Question>={}
     if (searchQuery) {
       query.$or=[
@@ -21,7 +21,26 @@ export async function getQuestions (params:GetQuestionsParams) {
         {content:{$regex:new RegExp(searchQuery,"i")}}
       ]
       
-    }                
+    }
+let sortOptions={
+
+} 
+switch(filter){
+case "newset":
+  sortOptions={createdAt:'desc'};
+  break;
+case 'frequent':
+  sortOptions={views:'desc'};
+  break;
+  case "unanswered":
+    query.answers={
+      $size:0
+    }
+    break;
+    default:
+      break;
+}
+
     const questions = await Question.find(
       query
     ).populate({
@@ -30,7 +49,7 @@ export async function getQuestions (params:GetQuestionsParams) {
     }).populate({
       path:'author',
       model:User
-    }).sort({createdAt:'desc'})
+    }).sort(sortOptions)
 
     return { questions }
   }catch(e){

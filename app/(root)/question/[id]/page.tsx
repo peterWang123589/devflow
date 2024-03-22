@@ -99,6 +99,8 @@ textStyle='text-dark400_light800 small-medium'/>
   questionId={result._id}
   userId={user._id}
   totalAnswers={result.answers.length}
+  page={searchParams?.page}
+  filter={searchParams?.filter}
   />
   <Answer
   question={result.content}
