@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { getTimestamp } from '@/lib/utils';
 import ParseHTML from './ParseHTML';
 import Votes from './Votes';
+import Pagination from './Pagination';
 
 
 
@@ -37,7 +38,7 @@ const AllAnswers =async ({questionId,userId,totalAnswers,page,filter}:Props) => 
      <div>
      {
       result.answers?.map((answer)=>(
-<article key={answer._id}
+<article key={answer._id} id={answer._id}
 className='text-dark100_light900 light-border border-b py-10'>
   <div className='flex items-center justify-between'>
     <div className='mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2'>
@@ -66,7 +67,7 @@ className='text-dark100_light900 light-border border-b py-10'>
       </Link>
        
        <div className='flex justify-end'>
-
+   
        <Votes
        type="answer"
        itemId={JSON.stringify(answer._id)}
@@ -86,7 +87,12 @@ className='text-dark100_light900 light-border border-b py-10'>
      }
       
      </div>
-      
+    <div className="mt-10">
+        <Pagination
+          pageNumber={page ? +page : 1}
+          isNext={result.isNext}
+        />
+      </div>
     </div>
   )
 }

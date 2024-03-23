@@ -66,7 +66,7 @@ isAuthor
       alt='like icon'
       value={formatAndDivideNumber(upvotes)}
       title='Votes'
-      textStyle='small-medium text-dark_light800'
+      textStyle='small-medium text-dark400_light800'
 
       />
     </div>

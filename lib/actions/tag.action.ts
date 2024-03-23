@@ -45,8 +45,9 @@ export async function getTopInteractedTags(params:GetTopInteractedTagsParams){
 export async function getAllTags(params: GetAllTagsParams) {
   try {
   await  connectToDatabase();
-const {searchQuery,filter}=params
+const {searchQuery,filter,page=1,pageSize=2}=params
 const query:FilterQuery<typeof Tag>={}
+const skipAmount = (page - 1) * pageSize
 if (searchQuery) {
   query.$or=[
     {name:{$regex:new RegExp(searchQuery,"i")}},
@@ -72,9 +73,12 @@ switch (filter) {
     break;
 }
 
-    const tags = await Tag.find(query).sort(sortOptions);
+    const tags = await Tag.find(query).sort(sortOptions)
+                  .limit(pageSize).skip(skipAmount);
+     const totalTags=await Tag.countDocuments(query);
+     const isNext=skipAmount+pageSize<totalTags;             
 
-    return { tags };
+    return { tags ,isNext};
   } catch (error) {
     console.log(error);
     throw error;
@@ -84,19 +88,17 @@ switch (filter) {
 export async function getQuestionByTagId(params:GetQuestionsByTagIdParams){
   try{
     await connectToDatabase()
-    const {tagId,searchQuery}=params
+    const {tagId,searchQuery,page=1,pageSize=1}=params
+    const skipAmount = (page - 1) * pageSize
     const tagFilter:FilterQuery<ITag>={_id:tagId}
-    const tag=await Tag.findOne(tagFilter).populate({
+    const tag=await Tag.findOne(tagFilter).sort({createdAt:'desc'}).skip(skipAmount).limit(pageSize).populate({
       path:'questions',
       model:Question,
       match:
         searchQuery? {title:{$regex:searchQuery, $options:'i'}}:{}
 
       ,
-      options:{
-      sort:{
-        createdAt:'desc'
-      }},
+
       populate:[
         {
           path:'author',
@@ -110,12 +112,14 @@ export async function getQuestionByTagId(params:GetQuestionsByTagIdParams){
           select:"_id name"
         }
       ]
-    })
+    }).exec()
     if (!tag) {
       throw new Error("Tag not found");
       
     }
-    return {tagTitle:tag.name,questions:tag.questions}
+    console.log(`skipAmount: ${skipAmount}, pageSize: ${pageSize}, tag.questions.length: ${tag.questions.length}`)
+    const isNext=skipAmount+pageSize<tag.questions.length
+    return {tagTitle:tag.name,questions:tag.questions,isNext}
   }catch(error){
    console.log(error)
    throw error

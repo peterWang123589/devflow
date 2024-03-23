@@ -9,13 +9,15 @@ import QuestionCard from '@/components/cards/QuestionCard';
 import Link from 'next/link';
 import { getQuestions } from '@/lib/actions/question.action';
 import { SearchParamsProps } from '@/types';
+import Pagination from '@/components/shared/Pagination';
 // questions=[]
 
 const Home = async ({searchParams}:SearchParamsProps) => {
-  const {questions}=await getQuestions({
-    filter:searchParams?.filter,
-    searchQuery:searchParams?.q
+  const {questions,isNext}=await getQuestions({
 
+    filter:searchParams?.filter,
+    searchQuery:searchParams?.q,
+    page:searchParams?.page ?(+searchParams):1
   })
 
   return (
@@ -59,7 +61,12 @@ questions.length>0?(
   />)
         }
        </div>
-  
+           <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={isNext}
+        />
+      </div>
     </>
   );
 };

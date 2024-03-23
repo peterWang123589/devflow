@@ -13,8 +13,9 @@ export async function getQuestions (params:GetQuestionsParams) {
   try {
     await connectToDatabase()
     console.log(params)
-    const { searchQuery,filter }=params
+    const { searchQuery,filter,page=1,pageSize=20 }=params
     const query:FilterQuery<typeof Question>={}
+    const skipAmount = (page - 1) * pageSize
     if (searchQuery) {
       query.$or=[
         {title:{$regex:new RegExp(searchQuery,"i")}},
@@ -49,9 +50,10 @@ case 'frequent':
     }).populate({
       path:'author',
       model:User
-    }).sort(sortOptions)
-
-    return { questions }
+    }).sort(sortOptions).skip(skipAmount).limit(pageSize)
+    const totalQuestions=await Question.countDocuments(query)
+    const isNext=skipAmount+pageSize<totalQuestions
+    return { questions,isNext}
   }catch(e){
     console.log(e)
   throw e
