@@ -11,6 +11,7 @@ export default authMiddleware({
     "/profile/:id",
     "/community",
     "/jobs",],
+    ignoredRoutes: ["/api/chatgpt"]
 }
 
 

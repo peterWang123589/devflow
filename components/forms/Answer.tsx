@@ -20,6 +20,7 @@ interface Props {
 const Answer=({questionId,question,authorId}:Props)=>{
   const pathname=usePathname()
   const [isSubmitting,setIsSubmitting]=useState(false)
+  const [isSubmittingAI,setIsSubmittingAI]=useState(false)
 const {mode}=useTheme()
 const editorRef=useRef(null)
 const form=useForm<z.infer<typeof AnswerSchema>>({
@@ -51,13 +52,60 @@ const handleCreateAnswer=async (values:z.infer<typeof AnswerSchema>)=>{
   }
   
 }
+
+
+const generateAIanswer=async ()=>{
+  if(!authorId) return
+  setIsSubmittingAI(true)
+ try {
+  const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
+        {
+          method: "POST",
+          body: JSON.stringify({ question }),
+        }
+      );
+
+      const aiAnswer = await response.json();
+      // console.log(aiAnswer);
+      console.log(aiAnswer);
+      if (!aiAnswer.reply) {
+            alert(
+          "Sorry for the inconvenience. No reply from the server because all credits have been used."
+        );
+        return;
+      }
+      // alert(aiAnswer.reply);
+
+      // Convert plain text to HTML format
+      const formattedAnswer = aiAnswer.reply
+        ? aiAnswer.reply.replace(/\n/g, "<br />")
+        : "";
+      // const formattedAnswer = aiAnswer.reply.replace(/\n/g, "<br />");
+
+      if (editorRef.current) {
+        const editor = editorRef.current as any;
+        editor.setContent(formattedAnswer);
+      }
+ } catch (error) {
+  console.log(error)
+  throw error
+ }finally{
+  setIsSubmittingAI(false) // reset
+ }
+}
 return (
   <div>
     <div className='flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2'>
       <h4 className='paragraph-semibold text-dark400_light800 '>
         Write your answer here
       </h4>
-      <Button className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500">
+      <Button
+      onClick={generateAIanswer}
+      disabled={isSubmittingAI}
+      className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500">
+        {isSubmittingAI ? 'Generating...' : <>
+        
        <Image
        src={"/assets/icons/stars.svg"}
        alt='star'
@@ -67,6 +115,7 @@ return (
 
        />
     Generate an AI answer
+        </>}
       </Button>
     </div>
     <Form {...form}>

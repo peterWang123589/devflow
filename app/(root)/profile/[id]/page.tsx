@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { URLProps } from '@/types'
+import {BadgeCounts, URLProps } from '@/types'
 import { auth, SignedIn} from '@clerk/nextjs'
 import ProfileLink from '@/components/shared/ProfileLink'
 import { getUserInfo } from '@/lib/actions/user.action'
@@ -84,6 +84,8 @@ const Page =async ({params,searchParams}:URLProps)=>{
       <Stats
         totalQuestions={userInfo.totalQuestions}
         totalAnswers={userInfo.totalAnswers}
+        badges={userInfo.badgeCounts as BadgeCounts}
+        reputation={userInfo.reputation}
       />
 
       <div className="mt-10 flex gap-10">
