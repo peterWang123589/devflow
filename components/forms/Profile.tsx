@@ -45,6 +45,7 @@ const Profile=({clerkId,user}:Props)=>{
   )
 
 async function onSubmit(values:z.infer<typeof ProfileSchema>) {
+  console.log(values)
   setIsSubmitting(true)
   try {
     await updateUser({
@@ -71,6 +72,7 @@ async function onSubmit(values:z.infer<typeof ProfileSchema>) {
  <form onSubmit={form.handleSubmit(onSubmit)} 
  className='mt-9 flex w-full flex-col gap-9'>
   <FormField 
+
   control={form.control}
   name="name"
   render={({field})=>(

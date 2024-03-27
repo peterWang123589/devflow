@@ -3,7 +3,7 @@ import Link from "next/link"
 import React from 'react'
 import {Badge} from '@/components/ui/badge'
 import RenderTag from '@/components/shared/RenderTag'
-import Image from "next/Image"
+import Image from "next/image"
 
 interface Props {
  user:{
