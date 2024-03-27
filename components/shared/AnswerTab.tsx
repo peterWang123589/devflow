@@ -17,7 +17,7 @@ const result =await getUserAnswers({
   userId,
   page:searchParams?.page ? +searchParams.page : 1
 })
-console.log(result)
+// console.log(result)
   return (
 
      <>

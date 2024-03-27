@@ -40,7 +40,7 @@ const Page=async ({params,searchParams}:any)=>{
    </p>
     </Link>
     <div className='text-dark200_light900 flex justify-end'>
-     <Votes
+     {user ?(<Votes
      type='question'
      itemId={JSON.stringify(result._id)}
      userId={JSON.stringify(user._id)}
@@ -51,7 +51,7 @@ const Page=async ({params,searchParams}:any)=>{
      hasSaved={user.saved.includes(result._id)}
      testflag="top"
      
-     />
+     />):(null)}
 
 
     </div>

@@ -293,7 +293,7 @@ const criteria:{type:BadgeCriteriaType,count:number}[]=[
       
     ]
     const badgeCounts=assignBadges({criteria})
-console.log(criteria,badgeCounts)
+// console.log(criteria,badgeCounts)
 
 
   return {

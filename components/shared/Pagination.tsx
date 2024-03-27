@@ -21,7 +21,7 @@ const handleNavigation=(direction:string)=>{
   })
   router.push(newUrl,{scroll:false})
 }
-console.log(isNext)
+// console.log(isNext)
 if(!isNext && pageNumber===1){
   return null
 }

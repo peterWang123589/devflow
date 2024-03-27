@@ -7,21 +7,48 @@ import HomeFilters from '@/components/home/HomeFilters';
 import NoResult from '@/components/shared/NoResult';
 import QuestionCard from '@/components/cards/QuestionCard';
 import Link from 'next/link';
-import { getQuestions } from '@/lib/actions/question.action';
+import { getQuestions, getRecommendedQuestions } from '@/lib/actions/question.action';
 import { SearchParamsProps } from '@/types';
 import Pagination from '@/components/shared/Pagination';
 import { Metadata } from 'next';
+import { auth } from '@clerk/nextjs';
 // questions=[]
 export const metadata: Metadata = {
   title: "Home | Dev Overflow",
 };
 export default async function Home ({searchParams}:SearchParamsProps) {
-  const {questions,isNext}=await getQuestions({
+  let questions:any[];
+  let isNext
+  const {userId}=auth()
+  console.log("----------",searchParams)
+  if(searchParams?.filter === "recommended"){
+    if(userId){
+       const     res = await getRecommendedQuestions({
+        userId,
+        searchQuery: searchParams.q,
+        page: searchParams.page ? +searchParams.page : 1,
+      });
+     console.log("recommed",res) 
+       questions=res.questions
+  isNext=res.isNext
+
+    }else{
+      questions=[]
+      isNext=false
+    }
+
+  }else{
+      const res=await getQuestions({
 
     filter:searchParams?.filter,
     searchQuery:searchParams?.q,
     page:searchParams?.page ?(+searchParams):1
   })
+  questions=res.questions
+  isNext=res.isNext
+
+  }
+
 
   return (
     <>
@@ -40,8 +67,8 @@ export default async function Home ({searchParams}:SearchParamsProps) {
        <div className='mt-10 flex w-full flex-col gap-6'>
         {
 questions.length>0?(
-  questions.map((question)=>{
-    console.log(question.author)
+  questions.map((question:any)=>{
+    // console.log(question.author)
     return(
       <QuestionCard key={question._id} 
       _id={question._id}

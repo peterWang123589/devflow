@@ -42,7 +42,6 @@ const AllAnswers =async ({questionId,userId,totalAnswers,page,filter}:Props) => 
 
 <article key={answer._id} id={answer._id}
 className='text-dark100_light900 light-border border-b py-10'>
-  {console.log(answer) as any || null}
   <div className='flex items-center justify-between'>
     <div className='mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2'>
       <Link href={`/profile/${answer.author.clerkId}`}

@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse} from 'next/server';
 
 export const POST =async (request:Request)=>{
   const {question} =await request.json();
-  console.log(question)
-  console.log(process.env.OPENAI_API_KEY)
+/*   console.log(question)
+  console.log(process.env.OPENAI_API_KEY) */
 try {
   const reponse=await fetch("https://api.openai.com/v1/chat/completions",{
     method:"POST",
@@ -40,7 +40,7 @@ try {
     }
 
 } catch (error:any) {
-     console.error(error);
+    //  console.error(error);
     return NextResponse.json({ error: error.message });
 }
 

@@ -68,7 +68,7 @@ const generateAIanswer=async ()=>{
 
       const aiAnswer = await response.json();
       // console.log(aiAnswer);
-      console.log(aiAnswer);
+      // console.log(aiAnswer);
       if (!aiAnswer.reply) {
             alert(
           "Sorry for the inconvenience. No reply from the server because all credits have been used."
