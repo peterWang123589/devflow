@@ -30,7 +30,7 @@ const Page =async ({searchParams}:SearchParamsProps) => {
 
 
     </div>
-<section className='mt-12 flex flex-wrap gap-4'>
+<div className='mt-12 flex flex-wrap gap-4'>
   {
     result.users.length>0?(
       result.users.map((user)=>{
@@ -51,7 +51,7 @@ const Page =async ({searchParams}:SearchParamsProps) => {
 
   }
 
-</section>
+</div>
       <div className="mt-10">
         <Pagination
           pageNumber={searchParams?.page ? +searchParams.page : 1}

@@ -8,6 +8,7 @@ import { formatAndDivideNumber } from '@/lib/utils';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { toast } from '../ui/use-toast';
 
 
 interface Props {
@@ -36,18 +37,39 @@ const Votes=({
   const pathname=usePathname()
   const router=useRouter()
   const handleSave=async ()=>{
+      if(!userId){
+      return toast({
+        title:"Please login to save",
+        description:"You need to login to save",
+          className:"text-dark400_light900 background-light700_dark400",
+      duration:2000
+      })
+    }
 await toggleSaveQuestion(
   {
     questionId:JSON.parse(itemId),
     userId:JSON.parse(userId),
     path:pathname
   }
+
 )
+return toast({
+  title:`Question ${!hasSaved ? "saved in" : "removed from"} your collection`,
+  variant:!hasSaved ?"default" :"destructive",
+    className:"text-dark400_light900 background-light700_dark400",
+      duration:2000
+})
 
   }
   const handleVote=async (action:"upvote" | "downvote")=>{
     if(!userId){
-      return;
+      return toast({
+        title:"Please login to vote",
+        description:"You need to login to vote",
+          className:"text-dark400_light900 background-light700_dark400",
+      duration:2000
+
+      })
     }
     if(action==="upvote"){
     if(type==="question"){
@@ -58,6 +80,7 @@ await toggleSaveQuestion(
           hasupVoted,
           path:pathname
         })
+
     }else if(type==="answer"){
       await upvoteAnswer({
         answerId:JSON.parse(itemId),
@@ -68,6 +91,12 @@ await toggleSaveQuestion(
       })
 
     }
+    return toast({
+      title:`Upvote ${!hasupVoted ? "Successful" : "Removed"}`,
+      variant:!hasupVoted ?"default" :"destructive",
+        className:"text-dark400_light900 background-light700_dark400",
+      duration:2000
+    })
   }else if(action==="downvote"){
      if(type==="question"){
       await downvoteQuestion({
@@ -88,6 +117,15 @@ await toggleSaveQuestion(
         path:pathname
       })
   }}
+  return toast(
+    {
+      title:`Downvote ${!hasdownVoted ? "Successful" : "Removed"}`,
+      variant:!hasdownVoted ?"default"  :"destructive",
+      className:"text-dark400_light900 background-light700_dark400",
+      duration:2000,
+
+    }
+  )
 
   }
 

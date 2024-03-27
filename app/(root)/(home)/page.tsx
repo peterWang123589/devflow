@@ -10,9 +10,12 @@ import Link from 'next/link';
 import { getQuestions } from '@/lib/actions/question.action';
 import { SearchParamsProps } from '@/types';
 import Pagination from '@/components/shared/Pagination';
+import { Metadata } from 'next';
 // questions=[]
-
-const Home = async ({searchParams}:SearchParamsProps) => {
+export const metadata: Metadata = {
+  title: "Home | Dev Overflow",
+};
+export default async function Home ({searchParams}:SearchParamsProps) {
   const {questions,isNext}=await getQuestions({
 
     filter:searchParams?.filter,
@@ -70,5 +73,3 @@ questions.length>0?(
     </>
   );
 };
-
-export default Home;
